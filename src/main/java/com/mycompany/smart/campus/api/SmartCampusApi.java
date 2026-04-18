@@ -9,6 +9,7 @@ import java.net.URI;
 
 import com.mycompany.smart.campus.api.model.Room;
 import com.mycompany.smart.campus.api.storage.DataStore;
+import com.mycompany.smart.campus.api.model.Sensor;
 
 public class SmartCampusApi {
 
@@ -23,6 +24,10 @@ public class SmartCampusApi {
     public static void main(String[] args) throws IOException {
         Room r1 = new Room("R1", "Library", 50);
         DataStore.rooms.put(r1.getId(), r1);
+        
+        Sensor s1 = new Sensor("S1", "Temperature", "ACTIVE", 22.5, "R1");
+        DataStore.sensors.put(s1.getId(), s1);
+        r1.getSensorIds().add(s1.getId());
         
         HttpServer server = startServer();
         System.out.println("Server started at " + BASE_URI);
