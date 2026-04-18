@@ -10,6 +10,8 @@ import java.net.URI;
 import com.mycompany.smart.campus.api.model.Room;
 import com.mycompany.smart.campus.api.storage.DataStore;
 import com.mycompany.smart.campus.api.model.Sensor;
+import com.mycompany.smart.campus.api.model.SensorReading;
+import java.util.ArrayList;
 
 public class SmartCampusApi {
 
@@ -28,6 +30,11 @@ public class SmartCampusApi {
         Sensor s1 = new Sensor("S1", "Temperature", "ACTIVE", 22.5, "R1");
         DataStore.sensors.put(s1.getId(), s1);
         r1.getSensorIds().add(s1.getId());
+        
+        
+        SensorReading reading1 = new SensorReading("SR1", System.currentTimeMillis(), 22.5);
+        DataStore.readings.put("S1", new ArrayList<>());
+        DataStore.readings.get("S1").add(reading1);
         
         HttpServer server = startServer();
         System.out.println("Server started at " + BASE_URI);
