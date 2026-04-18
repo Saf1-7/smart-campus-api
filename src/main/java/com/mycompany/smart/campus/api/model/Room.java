@@ -50,4 +50,4 @@ public class Room {
     public void setSensorIds(List<String> sensorIds) {
         this.sensorIds = sensorIds;
     }
-}
+} 
