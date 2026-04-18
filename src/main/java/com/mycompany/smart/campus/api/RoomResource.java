@@ -47,13 +47,21 @@ public class RoomResource {
     
     @DELETE
     @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response deleteRoom(@PathParam("id") String id) {
-        Room removed = DataStore.rooms.remove(id);
+        Room room = DataStore.rooms.get(id);
 
-        if (removed == null) {
-        return Response.status(Response.Status.NOT_FOUND).build();
+        if (room == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        return Response.noContent().build();
+        if (!room.getSensorIds().isEmpty()) {
+            return Response.status(Response.Status.CONFLICT)
+                    .entity("{\"error\":\"Room cannot be deleted because it still has sensors assigned.\"}")
+                    .build();
     }
+
+    DataStore.rooms.remove(id);
+    return Response.noContent().build();
+}
 }
