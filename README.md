@@ -21,6 +21,8 @@ This project is a REST API built using JAX-RS for a Smart Campus system.
 - Created the Room model
 - Created the Sensor model
 - Created the SensorReading model
+- Added GET /rooms/{id} endpoint
+- Added DELETE /rooms/{id} endpoint
 
 ## Running the API
 
