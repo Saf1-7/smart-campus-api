@@ -15,16 +15,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.QueryParam;
 
-import java.util.Collection;
 
 @Path("/sensors")
 public class SensorResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Sensor> getSensors(@QueryParam("type") String type) {
+    public Response getSensors(@QueryParam("type") String type) {
         if (type == null || type.isEmpty()) {
-        return DataStore.sensors.values();
+        return Response.ok(DataStore.sensors.values()).build();
     }
 
     java.util.List<Sensor> filteredSensors = new java.util.ArrayList<>();
@@ -35,7 +34,13 @@ public class SensorResource {
         }
     }
 
-    return filteredSensors;
+    if (filteredSensors.isEmpty()) {
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("No sensors found for type: " + type)
+                .build();
+    }
+
+    return Response.ok(filteredSensors).build();
 }
 
     @POST
