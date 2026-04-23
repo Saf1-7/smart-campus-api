@@ -5,7 +5,7 @@ Client-Server Architectures
 
 ## Overview
 This project is a REST API developed using JAX-RS (Jersey) for a Smart Campus system.  
-It allows management of rooms, sensors, and sensor readings, following a client-server architecture.
+It allows management of rooms, sensors, and sensor readings following a client-server architecture.
 
 ## Technologies Used
 - Java
@@ -20,7 +20,7 @@ It allows management of rooms, sensors, and sensor readings, following a client-
 - Get all rooms  
 - Get a room by ID  
 - Create a new room  
-- Delete a room (cannot delete if it has sensors assigned)  
+- Delete a room (returns 409 Conflict if the room has sensors assigned)  
 
 ### Sensors
 - Get all sensors  
@@ -28,13 +28,15 @@ It allows management of rooms, sensors, and sensor readings, following a client-
 - Create a new sensor  
 - Delete a sensor  
 - Sensors are linked to rooms using `roomId`  
+- Supports filtering sensors by type using query parameters  
+  (e.g. `/sensors?type=Temperature`)  
 
 ### Sensor Readings
 - Get all readings for a sensor  
 - Add a new reading  
 - Sensors can have multiple readings  
 - Adding a reading updates the sensor’s current value  
-- Sensors in maintenance mode cannot accept new readings  
+- Sensors in MAINTENANCE status cannot accept new readings (returns 403 Forbidden)  
 
 ## Data Models
 
@@ -66,44 +68,44 @@ http://localhost:8081/api/v1/
 
 ## Example Endpoints
 
-http://localhost:8081/api/v1/rooms  
-http://localhost:8081/api/v1/rooms/R1  
-http://localhost:8081/api/v1/sensors  
-http://localhost:8081/api/v1/sensors/S1  
-http://localhost:8081/api/v1/sensors/S1/readings  
+- http://localhost:8081/api/v1/rooms  
+- http://localhost:8081/api/v1/rooms/R1  
+- http://localhost:8081/api/v1/sensors  
+- http://localhost:8081/api/v1/sensors/S1  
+- http://localhost:8081/api/v1/sensors/S1/readings  
 
 ## Example Requests
 
-Create a room:
+### Create a room
 curl -X POST http://localhost:8081/api/v1/rooms
 
 -H "Content-Type: application/json"
 -d '{"id":"R2","name":"Lab","capacity":30}'
 
-
-Create a sensor:
+### Create a sensor
 curl -X POST http://localhost:8081/api/v1/sensors
 
 -H "Content-Type: application/json"
 -d '{"id":"S2","type":"CO2","status":"ACTIVE","currentValue":400.0,"roomId":"R1"}'
 
-
-Add a sensor reading:
+### Add a sensor reading
 curl -X POST http://localhost:8081/api/v1/sensors/S1/readings
 
 -H "Content-Type: application/json"
 -d '{"id":"SR2","timestamp":123456789,"value":30.0}'
 
-
-Delete a room:
+### Delete a room
 curl -X DELETE http://localhost:8081/api/v1/rooms/R1
 
+## Validation and Error Handling
+- 400 Bad Request when creating a sensor with a non-existent room  
+- 404 Not Found for missing rooms, sensors, or readings  
+- 409 Conflict when creating duplicate resources or deleting rooms with sensors  
+- 403 Forbidden when adding readings to sensors in MAINTENANCE status  
 
 ## Notes
 - Data is stored in memory using Java collections  
 - Restarting the server resets all data  
-- Basic error handling is implemented for invalid requests 
-- Returns HTTP 409 Conflict for invalid operations (e.g. deleting a room with sensors) 
 
 ## Progress Summary
 - Set up Maven project  
@@ -113,5 +115,5 @@ curl -X DELETE http://localhost:8081/api/v1/rooms/R1
 - Developed CRUD operations for rooms and sensors  
 - Linked sensors to rooms  
 - Implemented SensorReading resource  
-- Enabled updating of sensor values based on readings
-- Added sensor filtering using the type query parameter  
+- Enabled updating of sensor values based on readings  
+- Added sensor filtering using query parameters  
