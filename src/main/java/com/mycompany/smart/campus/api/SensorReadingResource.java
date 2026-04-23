@@ -40,16 +40,22 @@ public class SensorReadingResource {
     public Response addReading(@PathParam("sensorId") String sensorId, SensorReading reading) {
         Sensor sensor = DataStore.sensors.get(sensorId);
 
-        if (sensor == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+    if (sensor == null) {
+        return Response.status(Response.Status.NOT_FOUND).build();
+    }
 
-        List<SensorReading> sensorReadings =
-                DataStore.readings.computeIfAbsent(sensorId, k -> new ArrayList<>());
+    if ("MAINTENANCE".equalsIgnoreCase(sensor.getStatus())) {
+        return Response.status(Response.Status.FORBIDDEN)
+                .entity("Sensor is in maintenance mode")
+                .build();
+    }
 
-        sensorReadings.add(reading);
-        sensor.setCurrentValue(reading.getValue());
+    List<SensorReading> sensorReadings =
+            DataStore.readings.computeIfAbsent(sensorId, k -> new ArrayList<>());
 
-        return Response.status(Response.Status.CREATED).entity(reading).build();
+    sensorReadings.add(reading);
+    sensor.setCurrentValue(reading.getValue());
+
+    return Response.status(Response.Status.CREATED).entity(reading).build();
     }
 }

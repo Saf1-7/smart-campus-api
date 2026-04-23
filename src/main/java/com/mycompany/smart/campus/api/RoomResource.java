@@ -28,9 +28,15 @@ public class RoomResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addRoom(Room room) {
-        DataStore.rooms.put(room.getId(), room);
-        return Response.status(Response.Status.CREATED).entity(room).build();
-    }
+        if (DataStore.rooms.containsKey(room.getId())) {
+            return Response.status(Response.Status.CONFLICT)
+                    .entity("Room with this ID already exists")
+                    .build();
+        }
+
+    DataStore.rooms.put(room.getId(), room);
+    return Response.status(Response.Status.CREATED).entity(room).build();
+}
     
     @GET
     @Path("/{id}")

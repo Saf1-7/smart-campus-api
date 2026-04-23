@@ -49,17 +49,23 @@ public class SensorResource {
     public Response addSensor(Sensor sensor) {
         Room room = DataStore.rooms.get(sensor.getRoomId());
 
-        if (room == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Room does not exist")
-                    .build();
-        }
-
-        DataStore.sensors.put(sensor.getId(), sensor);
-        room.getSensorIds().add(sensor.getId());
-
-        return Response.status(Response.Status.CREATED).entity(sensor).build();
+    if (room == null) {
+        return Response.status(Response.Status.BAD_REQUEST)
+                .entity("Room does not exist")
+                .build();
     }
+
+    if (DataStore.sensors.containsKey(sensor.getId())) {
+        return Response.status(Response.Status.CONFLICT)
+                .entity("Sensor with this ID already exists")
+                .build();
+    }
+
+    DataStore.sensors.put(sensor.getId(), sensor);
+    room.getSensorIds().add(sensor.getId());
+
+    return Response.status(Response.Status.CREATED).entity(sensor).build();
+}
 
     @GET
     @Path("/{id}")
