@@ -13,6 +13,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.QueryParam;
 
 import java.util.Collection;
 
@@ -21,9 +22,21 @@ public class SensorResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Collection<Sensor> getSensors() {
+    public Collection<Sensor> getSensors(@QueryParam("type") String type) {
+        if (type == null || type.isEmpty()) {
         return DataStore.sensors.values();
     }
+
+    java.util.List<Sensor> filteredSensors = new java.util.ArrayList<>();
+
+    for (Sensor sensor : DataStore.sensors.values()) {
+        if (sensor.getType() != null && sensor.getType().equalsIgnoreCase(type)) {
+            filteredSensors.add(sensor);
+        }
+    }
+
+    return filteredSensors;
+}
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

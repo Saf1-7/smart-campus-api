@@ -113,4 +113,5 @@ curl -X DELETE http://localhost:8081/api/v1/rooms/R1
 - Developed CRUD operations for rooms and sensors  
 - Linked sensors to rooms  
 - Implemented SensorReading resource  
-- Enabled updating of sensor values based on readings  
+- Enabled updating of sensor values based on readings
+- Added sensor filtering using the type query parameter  
